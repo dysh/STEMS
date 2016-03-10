@@ -1,0 +1,51 @@
+#!/bin/bash
+
+if [ -a "buildNum" ]; then
+  echo
+  VERS=`cat buildNum`
+  echo old build number is $VERS
+  let VERS++
+  rm -f buildNum
+  touch buildNum
+  echo $VERS>>buildNum
+  echo
+else
+  echo
+  echo
+  echo      No build number tracker file!
+  echo      making new one and setting it to 0!
+  echo
+  echo
+  touch buildNum
+fi
+  
+echo
+echo '==================================================='
+echo '              simple compiler for stems '
+echo '==================================================='
+echo
+rm -f stems
+gcc -Wall -o stems stems.c 
+if [ -a "stems" ]; then
+  echo '    Compilation successful'
+  echo '    Now stripping'
+  strip stems
+  echo "       Done!"
+  echo " "
+  echo " now you may copy file stems to ~/bin"
+  echo " or become root and do \"cp stems /usr/local/bin/\""
+  echo " "
+  echo "make archive? (y/n)"
+  read CHOICE
+  if [ $CHOICE = 'y' ] ; then
+    echo writing new version $VERS
+    FN="stems-$VERS.tar.gz"
+    
+    echo ${PRJ[@]}
+    tar zcf $FN ${PRJ[@]}
+  fi
+else
+  echo ' ...............WRONG!.................'
+fi
+
+  
